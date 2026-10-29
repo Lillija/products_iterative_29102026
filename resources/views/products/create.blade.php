@@ -1,14 +1,16 @@
 <x-layout title="Create product">
     <h1>Create product</h1>
 
-    <form action="{{ route('products.store') }}" method="POST">
-        @csrf
+    <div class="form-card">
+        <form action="{{ route('products.store') }}" method="POST">
+            @csrf
 
-        @include('products._form')
+            @include('products._form')
 
-        <p>
-            <button type="submit">Save</button>
-            <a href="{{ route('products.index') }}">Cancel</a>
-        </p>
-    </form>
+            <p class="form-actions">
+                <button class="btn" type="submit">Save</button>
+                <a class="btn btn-secondary" href="{{ route('products.index') }}">Cancel</a>
+            </p>
+        </form>
+    </div>
 </x-layout>

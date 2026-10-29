@@ -13,17 +13,32 @@
     </header>
 
     <nav aria-label="Main navigation">
-        <a href="{{ route('products.index') }}">Products</a>
-        <a href="{{ route('products.create') }}">Create product</a>
+        <a
+            href="{{ route('products.index') }}"
+            class="nav-link{{ request()->routeIs('products.index') ? ' is-active' : '' }}"
+            @if (request()->routeIs('products.index')) aria-current="page" @endif
+        >Products</a>
+        <a
+            href="{{ route('products.create') }}"
+            class="nav-link{{ request()->routeIs('products.create') ? ' is-active' : '' }}"
+            @if (request()->routeIs('products.create')) aria-current="page" @endif
+        >Create product</a>
     </nav>
 
     <main>
+        @if (session('status'))
+            <div class="alert alert-success" role="status">
+                {{ session('status') }}
+            </div>
+        @endif
+
         {{ $slot }}
     </main>
 
     <aside>
-        <h2>Sidebar</h2>
-        <p>Holy grail layout implemented with CSS Grid.</p>
+        <h2>Tips</h2>
+        <p>Browse, create, edit and delete products from the menu on the left.</p>
+        <p class="muted">Tip: click a product name to see its details.</p>
     </aside>
 
     <footer>

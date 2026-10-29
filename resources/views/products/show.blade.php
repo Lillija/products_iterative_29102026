@@ -1,30 +1,29 @@
 <x-layout :title="$product->name">
     <h1>{{ $product->name }}</h1>
 
-    @if (session('status'))
-        <p>{{ session('status') }}</p>
-    @endif
+    <div class="card">
+        <dl class="product-details">
+            <dt>Description</dt>
+            <dd>{{ $product->description ?? '—' }}</dd>
 
-    <dl>
-        <dt>Description</dt>
-        <dd>{{ $product->description ?? '—' }}</dd>
+            <dt>Price</dt>
+            <dd>{{ number_format($product->price, 2) }}</dd>
 
-        <dt>Price</dt>
-        <dd>{{ $product->price }}</dd>
+            <dt>Quantity</dt>
+            <dd>{{ $product->quantity }} pcs</dd>
+        </dl>
 
-        <dt>Quantity</dt>
-        <dd>{{ $product->quantity }}</dd>
-    </dl>
+        <p class="form-actions">
+            <a class="btn btn-secondary" href="{{ route('products.edit', $product) }}">Edit</a>
 
-    <p>
-        <a href="{{ route('products.edit', $product) }}">Edit</a>
+            <form class="inline" action="{{ route('products.destroy', $product) }}" method="POST"
+                  onsubmit="return confirm('Delete &ldquo;{{ $product->name }}&rdquo;? This cannot be undone.')">
+                @csrf
+                @method('DELETE')
+                <button class="btn btn-danger" type="submit">Delete</button>
+            </form>
 
-        <form action="{{ route('products.destroy', $product) }}" method="POST">
-            @csrf
-            @method('DELETE')
-            <button type="submit">Delete</button>
-        </form>
-
-        <a href="{{ route('products.index') }}">Back to products</a>
-    </p>
+            <a class="btn btn-secondary" href="{{ route('products.index') }}">Back to products</a>
+        </p>
+    </div>
 </x-layout>
