@@ -27,7 +27,7 @@
 
     <main>
         @if (session('status'))
-            <div class="alert alert-success" role="status">
+            <div class="alert alert-success" role="status" data-auto-dismiss>
                 {{ session('status') }}
             </div>
         @endif
