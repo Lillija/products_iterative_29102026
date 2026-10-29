@@ -1,4 +1,70 @@
-/* Test condition: red text proves the stylesheet is loaded via the Vite dev server */
-body {
+/*
+ * Test condition kept from the Vite wiring check:
+ * the red heading proves the stylesheet is loaded through the Vite dev server.
+ */
+h1 {
     color: red;
+}
+
+/*
+ * Holy grail layout.
+ *
+ * grid areas:
+ *   header header header
+ *   nav    main   aside
+ *   footer footer footer
+ */
+body {
+    display: grid;
+    grid-template-areas:
+        'header header header'
+        'nav    main   aside'
+        'footer footer footer';
+    grid-template-columns: 220px minmax(0, 1fr) 220px;
+    grid-template-rows: auto 1fr auto;
+    min-height: 100vh;
+    margin: 0;
+    font-family: sans-serif;
+    color: #111827;
+}
+
+header {
+    grid-area: header;
+    background: #e5e7eb;
+    padding: 1rem;
+}
+
+nav {
+    grid-area: nav;
+    background: #374151;
+    padding: 1rem;
+}
+
+main {
+    grid-area: main;
+    padding: 1rem;
+}
+
+aside {
+    grid-area: aside;
+    background: #f3f4f6;
+    padding: 1rem;
+}
+
+footer {
+    grid-area: footer;
+    background: #111827;
+    color: #f9fafb;
+    text-align: center;
+    padding: 1rem;
+}
+
+nav a {
+    display: block;
+    color: #f9fafb;
+    margin-bottom: 0.5rem;
+}
+
+nav a:hover {
+    color: #fca5a5;
 }
