@@ -1,11 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit {{ $product->name }}</title>
-</head>
-<body>
+<x-layout :title="'Edit ' . $product->name">
     <h1>Edit product</h1>
 
     <form action="{{ route('products.update', $product) }}" method="POST">
@@ -49,5 +42,4 @@
             <a href="{{ route('products.show', $product) }}">Cancel</a>
         </p>
     </form>
-</body>
-</html>
+</x-layout>

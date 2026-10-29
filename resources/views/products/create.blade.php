@@ -1,11 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create product</title>
-</head>
-<body>
+<x-layout title="Create product">
     <h1>Create product</h1>
 
     <form action="{{ route('products.store') }}" method="POST">
@@ -48,5 +41,4 @@
             <a href="{{ route('products.index') }}">Cancel</a>
         </p>
     </form>
-</body>
-</html>
+</x-layout>
