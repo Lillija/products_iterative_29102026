@@ -1,0 +1,12 @@
+{
+    "mcpServers": {
+        "laravel-boost": {
+            "command": "wsl.exe",
+            "args": [
+                "/usr/bin/php8.3",
+                "/home/lillija/dev/3.k/klases-darbs-29102026/products-iterative/artisan",
+                "boost:mcp"
+            ]
+        }
+    }
+}
