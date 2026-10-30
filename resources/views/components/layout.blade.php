@@ -9,7 +9,7 @@
 </head>
 <body>
     <header>
-        <h1>Products app</h1>
+        <p class="logo">Sample Logo</p>
     </header>
 
     <nav aria-label="Main navigation">
@@ -42,13 +42,17 @@
     </main>
 
     <aside>
-        <h2>Tips</h2>
-        <p>Browse, create, edit and delete products from the menu on the left.</p>
-        <p class="muted">Tip: click a product name to see its details.</p>
+        <h2>Advertisement</h2>
+        <p class="ad">
+            <strong>Sample Ad</strong><br>
+            This is placeholder advertising text for the right sidebar.
+            Buy two products, get one free!
+        </p>
+        <p class="muted">Ad text is test content only.</p>
     </aside>
 
     <footer>
-        <p>products-iterative — Laravel {{ app()->version() }}</p>
+        <p>&copy; {{ date('Y') }} Sample Company. All rights reserved.</p>
     </footer>
 </body>
 </html>

@@ -118,10 +118,18 @@ footer {
 
 /* Typography */
 
-header h1 {
+/* Logo in the header */
+
+.logo {
+    display: inline-block;
     margin: 0;
-    font-size: 1.15rem;
-    letter-spacing: 0.01em;
+    padding: 0.3rem 0.7rem;
+    border-radius: var(--radius-sm);
+    background: var(--color-primary);
+    color: #fff;
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
 }
 
 main h1 {
@@ -139,6 +147,22 @@ aside h2 {
     text-transform: uppercase;
     letter-spacing: 0.05em;
     color: var(--color-muted);
+}
+
+/* Placeholder advertisement block in the right sidebar */
+
+aside .ad {
+    padding: 0.9rem;
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-bg);
+    color: var(--color-muted);
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+aside .ad strong {
+    color: var(--color-text);
 }
 
 a {
