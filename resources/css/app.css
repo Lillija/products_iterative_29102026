@@ -26,19 +26,32 @@
     --radius-sm: 6px;
     --shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
     --font: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    /* Comfortable reading measure for long-form content */
+    --content-max-width: 68rem;
+    /* Minimum comfortable tap target on touch screens (WCAG 2.5.8) */
+    --tap-target: 2.75rem;
 }
 
 * {
     box-sizing: border-box;
 }
 
+/* Stop iOS from inflating text when the user zooms in */
+html {
+    -webkit-text-size-adjust: 100%;
+}
+
 body {
     margin: 0;
     font-family: var(--font);
-    font-size: 1rem;
     line-height: 1.6;
     color: var(--color-text);
     background: var(--color-bg);
+    /* Comfortable default: slightly larger than the 16px browser minimum */
+    font-size: 1.0625rem;
+    /* Keep content clear of notches in landscape on phones */
+    padding-left: env(safe-area-inset-left, 0);
+    padding-right: env(safe-area-inset-right, 0);
 }
 
 /*
@@ -65,6 +78,10 @@ header {
     background: var(--color-surface);
     border-bottom: 1px solid var(--color-border);
     padding: 0.9rem 1.5rem;
+    /* Keep the title visible while scrolling long tables */
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
 nav {
@@ -77,6 +94,10 @@ nav {
 main {
     grid-area: main;
     padding: 1.75rem;
+    /* Cap line length so text stays easy to read on wide screens */
+    max-width: var(--content-max-width);
+    width: 100%;
+    margin-inline: auto;
 }
 
 aside {
@@ -128,9 +149,17 @@ a:hover {
     color: var(--color-primary-hover);
 }
 
+/* Links inside readable content are underlined so they are not
+   conveyed by colour alone (WCAG 1.4.1) */
+main :where(p, li, dd, td) a:not(.btn) {
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+}
+
 :focus-visible {
     outline: 2px solid var(--color-primary);
     outline-offset: 2px;
+    border-radius: 2px;
 }
 
 .muted {
@@ -141,7 +170,9 @@ a:hover {
 /* Navigation */
 
 nav .nav-link {
-    display: block;
+    display: flex;
+    align-items: center;
+    min-height: var(--tap-target);
     padding: 0.55rem 0.75rem;
     margin-bottom: 0.35rem;
     border-radius: var(--radius-sm);
@@ -165,7 +196,9 @@ nav .nav-link.is-active {
 .btn {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 0.4rem;
+    min-height: var(--tap-target);
     padding: 0.55rem 1rem;
     border: 1px solid transparent;
     border-radius: var(--radius);
@@ -177,7 +210,7 @@ nav .nav-link.is-active {
     cursor: pointer;
     background: var(--color-primary);
     color: #fff;
-    transition: background-color 0.15s ease;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 
 .btn:hover {
@@ -205,7 +238,14 @@ nav .nav-link.is-active {
 }
 
 form.inline {
-    display: inline;
+    display: inline-block;
+    /* Align the button with neighbouring links/buttons on the same line */
+    vertical-align: middle;
+    margin: 0;
+}
+
+form.inline .btn {
+    vertical-align: middle;
 }
 
 /* Tables */
@@ -251,10 +291,21 @@ td .actions {
     white-space: nowrap;
 }
 
+/* Numbers line up for quick scanning */
+.numeric {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
 .empty-state {
     padding: 2.5rem 1rem;
     text-align: center;
     color: var(--color-muted);
+}
+
+/* The empty row is a plain message, not a hoverable record */
+tbody tr:has(.empty-state):hover {
+    background: transparent;
 }
 
 /* Forms */
@@ -279,14 +330,34 @@ label {
 }
 
 input,
-textarea {
+textarea,
+select {
     width: 100%;
+    min-height: var(--tap-target);
     padding: 0.55rem 0.75rem;
     border: 1px solid var(--color-border);
     border-radius: var(--radius-sm);
     font: inherit;
     color: var(--color-text);
     background: var(--color-surface);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+textarea {
+    /* Textareas keep their content-sized height */
+    min-height: 0;
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: var(--color-muted);
+}
+
+input:disabled,
+textarea:disabled {
+    background: var(--color-bg);
+    color: var(--color-muted);
+    cursor: not-allowed;
 }
 
 input:focus,
@@ -294,6 +365,13 @@ textarea:focus {
     border-color: var(--color-primary);
     outline: 2px solid var(--color-primary-soft);
     outline-offset: 0;
+}
+
+/* Stronger ring for keyboard users */
+input:focus-visible,
+textarea:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 1px;
 }
 
 .input-invalid {
@@ -372,10 +450,23 @@ textarea:focus {
     color: var(--color-error-text);
 }
 
+/* Flash messages fade out just before app.js removes them (~4s) */
+.alert[data-auto-dismiss] {
+    animation: alert-fade-out 0.4s ease 3.6s forwards;
+}
+
+@keyframes alert-fade-out {
+    to {
+        opacity: 0;
+        transform: translateY(-0.25rem);
+    }
+}
+
 /* Pagination */
 
 .pagination {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 0.5rem;
     margin-top: 1.25rem;
@@ -383,12 +474,16 @@ textarea:focus {
 
 .pagination a,
 .pagination span {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap-target);
     padding: 0.45rem 0.9rem;
     border: 1px solid var(--color-border);
     border-radius: var(--radius);
     background: var(--color-surface);
     text-decoration: none;
     font-size: 0.95rem;
+    transition: border-color 0.15s ease, color 0.15s ease;
 }
 
 .pagination a {
@@ -410,6 +505,28 @@ textarea:focus {
     background: transparent;
     color: var(--color-muted);
     font-size: 0.9rem;
+}
+
+/* Medium screens: move the tips aside below the content so the
+   table does not get squeezed between two side columns */
+
+@media (max-width: 1100px) {
+    body {
+        grid-template-columns: 230px minmax(0, 1fr);
+        grid-template-areas:
+            'header header'
+            'nav    main'
+            'aside  aside'
+            'footer footer';
+    }
+
+    aside {
+        border-left: 0;
+        border-top: 1px solid var(--color-border);
+        max-width: var(--content-max-width);
+        width: 100%;
+        margin-inline: auto;
+    }
 }
 
 /* Responsive: stack the holy grail columns on small screens */
@@ -445,5 +562,68 @@ textarea:focus {
 
     main {
         padding: 1.25rem;
+    }
+
+    /* Avoid the iOS "zoom on focus" jump: inputs must be >= 16px */
+    input,
+    textarea,
+    select {
+        font-size: 1rem;
+    }
+
+    .form-card,
+    .card {
+        max-width: none;
+    }
+
+    /* Stack form buttons so each one gets a full-width tap target */
+    .form-actions {
+        flex-wrap: wrap;
+    }
+}
+
+/* Touch devices: taps leave a "sticky" hover state behind, so only the
+   states that carry meaning (active nav item) are kept. Placed last so
+   it wins over the hover rules above on equal specificity. */
+
+@media (hover: none) {
+    a:hover {
+        color: var(--color-primary);
+    }
+
+    nav .nav-link:hover {
+        background: transparent;
+        color: var(--color-text);
+    }
+
+    nav .nav-link.is-active,
+    nav .nav-link.is-active:hover {
+        background: var(--color-primary-soft);
+        color: var(--color-primary);
+    }
+
+    tbody tr:nth-child(odd):hover {
+        background: transparent;
+    }
+
+    tbody tr:nth-child(even):hover {
+        background: #fafbfc;
+    }
+
+    tbody tr:has(.empty-state):hover {
+        background: transparent;
+    }
+}
+
+/* Respect the user's motion preference everywhere */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
     }
 }

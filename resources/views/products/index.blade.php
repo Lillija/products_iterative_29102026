@@ -10,8 +10,8 @@
             <thead>
                 <tr>
                     <th scope="col">Name</th>
-                    <th scope="col">Price</th>
-                    <th scope="col">Quantity</th>
+                    <th scope="col" class="numeric">Price</th>
+                    <th scope="col" class="numeric">Quantity</th>
                     <th scope="col">Actions</th>
                 </tr>
             </thead>
@@ -23,8 +23,8 @@
                                 {{ $product->name }}
                             </a>
                         </td>
-                        <td>{{ number_format($product->price, 2) }}</td>
-                        <td>{{ $product->quantity }}</td>
+                        <td class="numeric">{{ number_format($product->price, 2) }}</td>
+                        <td class="numeric">{{ $product->quantity }}</td>
                         <td class="actions">
                             <a class="btn btn-secondary" href="{{ route('products.edit', $product) }}">Edit</a>
 
