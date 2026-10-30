@@ -13,16 +13,22 @@
     </header>
 
     <nav aria-label="Main navigation">
-        <a
-            href="{{ route('products.index') }}"
-            class="nav-link{{ request()->routeIs('products.index') ? ' is-active' : '' }}"
-            @if (request()->routeIs('products.index')) aria-current="page" @endif
-        >Products</a>
-        <a
-            href="{{ route('products.create') }}"
-            class="nav-link{{ request()->routeIs('products.create') ? ' is-active' : '' }}"
-            @if (request()->routeIs('products.create')) aria-current="page" @endif
-        >Create product</a>
+        <ul class="nav-list">
+            <li>
+                <a
+                    href="{{ route('products.index') }}"
+                    class="nav-link{{ request()->routeIs('products.index') ? ' is-active' : '' }}"
+                    @if (request()->routeIs('products.index')) aria-current="page" @endif
+                >Products</a>
+            </li>
+            <li>
+                <a
+                    href="{{ route('products.create') }}"
+                    class="nav-link{{ request()->routeIs('products.create') ? ' is-active' : '' }}"
+                    @if (request()->routeIs('products.create')) aria-current="page" @endif
+                >Create product</a>
+            </li>
+        </ul>
     </nav>
 
     <main>

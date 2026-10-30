@@ -169,12 +169,22 @@ main :where(p, li, dd, td) a:not(.btn) {
 
 /* Navigation */
 
+/* Navigation: a flexbox list stacked in a column down the sidebar */
+
+nav .nav-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
 nav .nav-link {
     display: flex;
     align-items: center;
     min-height: var(--tap-target);
     padding: 0.55rem 0.75rem;
-    margin-bottom: 0.35rem;
     border-radius: var(--radius-sm);
     color: var(--color-text);
     text-decoration: none;
@@ -545,14 +555,12 @@ textarea:focus-visible {
     nav {
         border-right: 0;
         border-bottom: 1px solid var(--color-border);
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.35rem;
         padding: 0.75rem;
     }
 
-    nav .nav-link {
-        margin-bottom: 0;
+    nav .nav-list {
+        flex-direction: row;
+        flex-wrap: wrap;
     }
 
     aside {
