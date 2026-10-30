@@ -5,40 +5,46 @@
  */
 
 :root {
-    --color-bg: #f6f7f9;
-    --color-surface: #ffffff;
-    --color-border: #e2e8f0;
-    --color-text: #0f172a;
-    --color-muted: #64748b;
-    --color-primary: #4f46e5;
-    --color-primary-hover: #4338ca;
-    --color-primary-soft: #eef2ff;
-    --color-danger: #dc2626;
-    --color-danger-hover: #b91c1b;
-    --color-danger-soft: #fef2f2;
-    --color-success-bg: #ecfdf5;
-    --color-success-border: #34d399;
-    --color-success-text: #065f46;
-    --color-error-bg: #fef2f2;
-    --color-error-border: #f87171;
-    --color-error-text: #991b1b;
+    /* Light theme — palette:
+       #754A77 plum (primary) · #FCDBBF peach (logo/footer accents)
+       · #D3D4D6 silver (page background) · #575B60 slate (muted text)
+       · #26252B charcoal (text/footer) · #39443C olive (success)
+       · #6F5B5B taupe (danger) · #C19C8B rose (hover wash) */
+    --color-bg: #d3d4d6;
+    /* Near-white surface, a light mix of the peach and silver */
+    --color-surface: #fbf8f4;
+    --color-border: rgba(38, 37, 43, 0.16);
+    --color-text: #26252b;
+    --color-muted: #575b60;
+    --color-primary: #754a77;
+    --color-primary-hover: #5e3b60;
+    --color-primary-soft: rgba(193, 156, 139, 0.15);
+    --color-danger: #6f5b5b;
+    --color-danger-hover: #574646;
+    --color-danger-soft: rgba(111, 91, 91, 0.12);
+    --color-success-bg: rgba(57, 68, 60, 0.1);
+    --color-success-border: rgba(57, 68, 60, 0.5);
+    --color-success-text: #39443c;
+    --color-error-bg: rgba(111, 91, 91, 0.12);
+    --color-error-border: rgba(111, 91, 91, 0.45);
+    --color-error-text: #6f5b5b;
     --radius: 8px;
     --radius-sm: 6px;
-    --shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+    --shadow: 0 1px 3px rgba(38, 37, 43, 0.08);
     --font: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     /* Comfortable reading measure for long-form content */
     --content-max-width: 68rem;
     /* Minimum comfortable tap target on touch screens (WCAG 2.5.8) */
     --tap-target: 2.75rem;
-    /* Themed element colors kept as variables so the dark theme only
+    /* Themed element colors kept as variables so a theme only
        swaps variable values */
     --on-primary: #ffffff;
     --on-danger: #ffffff;
-    --logo-bg: var(--color-primary);
-    --logo-text: #ffffff;
-    --stripe: #fafbfc;
-    --footer-bg: var(--color-text);
-    --footer-text: #f9fafb;
+    --logo-bg: #754a77;
+    --logo-text: #fcdbbf;
+    --stripe: #e7e6e4;
+    --footer-bg: #26252b;
+    --footer-text: #fcdbbf;
 }
 
 * {
