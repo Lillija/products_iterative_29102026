@@ -32,11 +32,7 @@
     </nav>
 
     <main>
-        @if (session('status'))
-            <div class="alert alert-success" role="status" data-auto-dismiss>
-                {{ session('status') }}
-            </div>
-        @endif
+        <x-flash-message />
 
         {{ $slot }}
     </main>
