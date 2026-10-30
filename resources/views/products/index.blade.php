@@ -25,9 +25,9 @@
                             </a>
                         </td>
                         <td>
-<span class="status-badge status-{{ $product->status?->value ?? 'default' }}">
-    {{ $product->status?->label() ?? 'Nezināms' }}
-</span>
+                        <span class="status-badge status-{{ $product->status?->value ?? 'default' }}">
+                            {{ $product->status?->label() ?? 'Nezināms' }}
+                        </span>
                         </td>
                         <td>
                             {{ $product->expiration_date?->format('Y-m-d') ?? '—' }}
