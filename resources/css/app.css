@@ -30,6 +30,15 @@
     --content-max-width: 68rem;
     /* Minimum comfortable tap target on touch screens (WCAG 2.5.8) */
     --tap-target: 2.75rem;
+    /* Themed element colors kept as variables so the dark theme only
+       swaps variable values */
+    --on-primary: #ffffff;
+    --on-danger: #ffffff;
+    --logo-bg: var(--color-primary);
+    --logo-text: #ffffff;
+    --stripe: #fafbfc;
+    --footer-bg: var(--color-text);
+    --footer-text: #f9fafb;
 }
 
 * {
@@ -78,10 +87,52 @@ header {
     background: var(--color-surface);
     border-bottom: 1px solid var(--color-border);
     padding: 0.9rem 1.5rem;
+    /* Logo on the left, theme toggle on the right */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
     /* Keep the title visible while scrolling long tables */
     position: sticky;
     top: 0;
     z-index: 10;
+}
+
+/* Theme toggle button in the header */
+
+.theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: var(--tap-target);
+    min-height: var(--tap-target);
+    padding: 0.4rem 0.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--color-text);
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.theme-toggle:hover {
+    background: var(--color-primary-soft);
+    border-color: var(--color-primary);
+}
+
+/* Light mode shows the moon (switch to dark), dark mode the sun */
+.theme-toggle .icon-sun {
+    display: none;
+}
+
+:root[data-theme='dark'] .theme-toggle .icon-moon {
+    display: none;
+}
+
+:root[data-theme='dark'] .theme-toggle .icon-sun {
+    display: inline;
 }
 
 nav {
@@ -109,8 +160,8 @@ aside {
 
 footer {
     grid-area: footer;
-    background: var(--color-text);
-    color: #f9fafb;
+    background: var(--footer-bg);
+    color: var(--footer-text);
     text-align: center;
     padding: 0.9rem;
     font-size: 0.9rem;
@@ -125,8 +176,8 @@ footer {
     margin: 0;
     padding: 0.3rem 0.7rem;
     border-radius: var(--radius-sm);
-    background: var(--color-primary);
-    color: #fff;
+    background: var(--logo-bg);
+    color: var(--logo-text);
     font-size: 1.05rem;
     font-weight: 600;
     letter-spacing: 0.02em;
@@ -265,6 +316,7 @@ nav .nav-link.is-active {
 
 .btn-danger {
     background: var(--color-danger);
+    color: var(--on-danger);
 }
 
 .btn-danger:hover {
@@ -314,7 +366,7 @@ thead th {
 }
 
 tbody tr:nth-child(even) {
-    background: #fafbfc;
+    background: var(--stripe);
 }
 
 tbody tr:hover {
@@ -444,7 +496,7 @@ textarea:focus-visible {
 .field-error {
     display: block;
     margin-top: 0.3rem;
-    color: var(--color-danger);
+    color: var(--color-error-text);
     font-size: 0.875rem;
 }
 
@@ -667,12 +719,101 @@ textarea:focus-visible {
     }
 
     tbody tr:nth-child(even):hover {
-        background: #fafbfc;
+        background: var(--stripe);
     }
 
     tbody tr:has(.empty-state):hover {
         background: transparent;
     }
+}
+
+/*
+ * Dark theme.
+ * Palette: #9cc9dd, #ac1c1c, #e8d9af, #000000, #eeeeee.
+ * Neutral surfaces are mixes of the two greys; the cream is reserved
+ * for the logo, the light blue for primary accents, the red for danger.
+ */
+
+:root[data-theme='dark'] {
+    --color-bg: #000000;
+    --color-surface: #161616;
+    --color-border: rgba(238, 238, 238, 0.18);
+    --color-text: #eeeeee;
+    --color-muted: rgba(238, 238, 238, 0.65);
+
+    --color-primary: #9cc9dd;
+    --color-primary-hover: #bfe0ee;
+    --color-primary-soft: rgba(156, 201, 221, 0.16);
+
+    /* Dark red keeps its hue, text needs the lighter tone for contrast */
+    --color-danger: #ac1c1c;
+    --color-danger-hover: #8f1414;
+    --color-danger-soft: rgba(172, 28, 28, 0.3);
+    --color-error-bg: rgba(172, 28, 28, 0.3);
+    --color-error-border: rgba(239, 154, 154, 0.6);
+    --color-error-text: #ef9a9a;
+
+    --color-success-bg: rgba(156, 201, 221, 0.14);
+    --color-success-border: rgba(156, 201, 221, 0.55);
+    --color-success-text: #9cc9dd;
+
+    --on-primary: #000000;
+    --on-danger: #ffffff;
+    --logo-bg: #e8d9af;
+    --logo-text: #000000;
+    --stripe: rgba(238, 238, 238, 0.05);
+    --footer-bg: #161616;
+    --footer-text: var(--color-text);
+    --shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+/* Same palette, applied for visitors who follow the system setting
+   and have JavaScript disabled (the toggle stores an explicit choice,
+   which wins because the attribute is then set). */
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme]) {
+        --color-bg: #000000;
+        --color-surface: #161616;
+        --color-border: rgba(238, 238, 238, 0.18);
+        --color-text: #eeeeee;
+        --color-muted: rgba(238, 238, 238, 0.65);
+
+        --color-primary: #9cc9dd;
+        --color-primary-hover: #bfe0ee;
+        --color-primary-soft: rgba(156, 201, 221, 0.16);
+
+        --color-danger: #ac1c1c;
+        --color-danger-hover: #8f1414;
+        --color-danger-soft: rgba(172, 28, 28, 0.3);
+        --color-error-bg: rgba(172, 28, 28, 0.3);
+        --color-error-border: rgba(239, 154, 154, 0.6);
+        --color-error-text: #ef9a9a;
+
+        --color-success-bg: rgba(156, 201, 221, 0.14);
+        --color-success-border: rgba(156, 201, 221, 0.55);
+        --color-success-text: #9cc9dd;
+
+        --on-primary: #000000;
+        --on-danger: #ffffff;
+        --logo-bg: #e8d9af;
+        --logo-text: #000000;
+        --stripe: rgba(238, 238, 238, 0.05);
+        --footer-bg: #161616;
+        --footer-text: var(--color-text);
+        --shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+    }
+}
+
+/* A gentle cross-fade when the theme flips */
+
+body,
+header,
+footer,
+.table-wrapper,
+.form-card,
+.card {
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
 /* Respect the user's motion preference everywhere */

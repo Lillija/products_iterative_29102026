@@ -3,13 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light dark">
     <title>{{ $title ?? config('app.name') }}</title>
+
+    <script>
+        // Apply the saved or system theme before the CSS loads to avoid a flash
+        (function () {
+            var stored = null;
+            try { stored = localStorage.getItem('theme'); } catch (error) { /* storage unavailable */ }
+            document.documentElement.dataset.theme =
+                stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        })();
+    </script>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body>
     <header>
         <p class="logo">Sample Logo</p>
+        <button
+            type="button"
+            class="theme-toggle"
+            data-theme-toggle
+            aria-label="Toggle dark mode"
+        >
+            <span class="icon-moon" aria-hidden="true">🌙</span>
+            <span class="icon-sun" aria-hidden="true">☀️</span>
+        </button>
     </header>
 
     <nav aria-label="Main navigation">
