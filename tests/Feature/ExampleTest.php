@@ -8,12 +8,12 @@ use Tests\TestCase;
 class ExampleTest extends TestCase
 {
     /**
-     * A basic test example.
+     * The root path forwards visitors to the product list.
      */
-    public function test_the_application_returns_a_successful_response(): void
+    public function test_root_path_redirects_to_the_product_list(): void
     {
         $response = $this->get('/');
 
-        $response->assertStatus(200);
+        $response->assertRedirect(route('products.index'));
     }
 }
