@@ -1,0 +1,168 @@
+<?php
+
+namespace Tests\Feature;
+
+use App\Enums\ProductStatus;
+use App\Models\Product;
+use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use Tests\TestCase;
+
+class ProductControllerTest extends TestCase
+{
+    use LazilyRefreshDatabase;
+
+    public function test_index_shows_existing_products(): void
+    {
+        $product = Product::factory()->create();
+
+        $response = $this->get(route('products.index'));
+
+        $response->assertOk()
+            ->assertSee($product->name);
+    }
+
+    public function test_create_shows_the_product_form(): void
+    {
+        $response = $this->get(route('products.create'));
+
+        $response->assertOk()
+            ->assertSee('Name')
+            ->assertSee('Description')
+            ->assertSee('Expiration date')
+            ->assertSee('Status')
+            ->assertSee('Quantity');
+    }
+
+    public function test_valid_payload_stores_a_product_and_redirects_to_its_page(): void
+    {
+        $product = Product::factory()->make();
+
+        $response = $this->post(route('products.store'), static::payload($product));
+
+        $stored = Product::query()->sole();
+
+        $response->assertRedirect(route('products.show', $stored))
+            ->assertSessionHas('status', 'Product created.');
+
+        $this->assertModelExists($stored);
+        $this->assertSame($product->name, $stored->name);
+        $this->assertSame($product->description, $stored->description);
+        $this->assertSame($product->expiration_date->toDateString(), $stored->expiration_date->toDateString());
+        $this->assertSame($product->status, $stored->status);
+        $this->assertSame($product->quantity, $stored->quantity);
+    }
+
+    public function test_empty_payload_rejects_with_errors_and_stores_nothing(): void
+    {
+        $response = $this->post(route('products.store'), []);
+
+        $response->assertRedirect()
+            ->assertSessionHasErrors(['name', 'quantity', 'status'])
+            ->assertSessionHasErrorsIn('default', ['name' => 'The name field is required.']);
+
+        $this->assertDatabaseCount('products', 0);
+    }
+
+    public static function invalidPayloads(): array
+    {
+        return [
+            'negative quantity' => [['quantity' => -1]],
+            'non-numeric quantity' => [['quantity' => 'many']],
+            'invalid status' => [['status' => 'recalled']],
+            'past expiration date' => [['expiration_date' => '2020-01-01']],
+            'name beyond length limit' => [['name' => str_repeat('a', 256)]],
+        ];
+    }
+
+    #[DataProvider('invalidPayloads')]
+    public function test_invalid_payload_rejects_and_stores_nothing(array $override): void
+    {
+        $payload = static::payload(Product::factory()->make(), $override);
+
+        $response = $this->post(route('products.store'), $payload);
+
+        $response->assertRedirect()
+            ->assertSessionHasErrors(array_keys($override));
+
+        $this->assertDatabaseCount('products', 0);
+    }
+
+    public function test_show_shows_the_stored_product_details(): void
+    {
+        $product = Product::factory()->create();
+
+        $response = $this->get(route('products.show', $product));
+
+        $response->assertOk()
+            ->assertSee($product->name)
+            ->assertSee($product->description)
+            ->assertSee($product->status->label())
+            ->assertSee((string) $product->quantity);
+    }
+
+    public function test_edit_shows_the_form_filled_with_current_values(): void
+    {
+        $product = Product::factory()->create();
+
+        $response = $this->get(route('products.edit', $product));
+
+        $response->assertOk()
+            ->assertSee($product->name);
+    }
+
+    public function test_valid_payload_updates_the_product_and_redirects_back(): void
+    {
+        $product = Product::factory()->create();
+
+        $response = $this->put(route('products.update', $product), [
+            'name' => 'Sunflower Oil 750 ml',
+            'description' => 'Cold-pressed for salads.',
+            'expiration_date' => today()->addYear()->toDateString(),
+            'status' => ProductStatus::Active->value,
+            'quantity' => 8,
+        ]);
+
+        $response->assertRedirect(route('products.show', $product))
+            ->assertSessionHas('status', 'Product updated.');
+
+        $product->refresh();
+
+        $this->assertSame('Sunflower Oil 750 ml', $product->name);
+        $this->assertSame('Cold-pressed for salads.', $product->description);
+        $this->assertSame(today()->addYear()->toDateString(), $product->expiration_date->toDateString());
+        $this->assertSame(ProductStatus::Active, $product->status);
+        $this->assertSame(8, $product->quantity);
+    }
+
+    public function test_destroy_deletes_the_product_and_returns_to_the_list(): void
+    {
+        $product = Product::factory()->create();
+
+        $response = $this->delete(route('products.destroy', $product));
+
+        $response->assertRedirect(route('products.index'))
+            ->assertSessionHas('status', 'Product deleted.');
+
+        $this->assertModelMissing($product);
+    }
+
+    /**
+     * A valid product payload with optional overrides.
+     *
+     * @param  array<string, mixed>  $override
+     * @return array<string, mixed>
+     */
+    private static function payload(?Product $productFactoryData = null, array $override = []): array
+    {
+        $product = $productFactoryData ?? Product::factory()->make();
+
+        return array_merge([
+            'name' => $product->name,
+            'description' => $product->description,
+            'expiration_date' => $product->expiration_date->toDateString(),
+            'status' => $product->status->value,
+            'quantity' => $product->quantity,
+        ], $override);
+    }
+}
