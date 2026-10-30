@@ -6,8 +6,15 @@
             <dt>Description</dt>
             <dd>{{ $product->description ?? '—' }}</dd>
 
-            <dt>Price</dt>
-            <dd>{{ number_format($product->price, 2) }}</dd>
+            <dt>Status</dt>
+            <dd>
+                <span class="status-badge status-{{ $product->status->value }}">
+                    {{ $product->status->label() }}
+                </span>
+            </dd>
+
+            <dt>Expiration date</dt>
+            <dd>{{ $product->expiration_date?->format('Y-m-d') ?? '—' }}</dd>
 
             <dt>Quantity</dt>
             <dd>{{ $product->quantity }} pcs</dd>

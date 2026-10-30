@@ -38,18 +38,33 @@
 </div>
 
 <div class="form-field">
-    <label for="price">Price</label>
+    <label for="expiration_date">Expiration date</label>
     <input
-        type="number"
-        id="price"
-        name="price"
-        step="0.01"
-        min="0"
-        value="{{ old('price', $product->price ?? '') }}"
-        @error('price') class="input-invalid" @enderror
-        required
+        type="date"
+        id="expiration_date"
+        name="expiration_date"
+        value="{{ old('expiration_date', isset($product) && $product->expiration_date ? $product->expiration_date->format('Y-m-d') : '') }}"
+        @error('expiration_date') class="input-invalid" @enderror
     >
-    @error('price')
+    @error('expiration_date')
+        <span class="field-error">{{ $message }}</span>
+    @enderror
+</div>
+
+<div class="form-field">
+    <label for="status">Status</label>
+    <select
+        id="status"
+        name="status"
+        @error('status') class="input-invalid" @enderror
+    >
+        @foreach (\App\Enums\ProductStatus::options() as $value => $label)
+            <option value="{{ $value }}" @selected(old('status', $product->status->value ?? 'active') === $value)>
+                {{ $label }}
+            </option>
+        @endforeach
+    </select>
+    @error('status')
         <span class="field-error">{{ $message }}</span>
     @enderror
 </div>

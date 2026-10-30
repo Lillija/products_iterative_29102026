@@ -342,6 +342,34 @@ tbody tr:has(.empty-state):hover {
     background: transparent;
 }
 
+/* Status badges */
+
+.status-badge {
+    display: inline-block;
+    padding: 0.15rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    line-height: 1.5;
+    white-space: nowrap;
+}
+
+.status-active {
+    background: var(--color-success-bg);
+    color: var(--color-success-text);
+}
+
+.status-inactive {
+    background: var(--color-bg);
+    color: var(--color-muted);
+    border: 1px solid var(--color-border);
+}
+
+.status-discontinued {
+    background: var(--color-danger-soft);
+    color: var(--color-error-text);
+}
+
 /* Forms */
 
 .form-card {

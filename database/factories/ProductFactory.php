@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\ProductStatus;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -20,7 +21,8 @@ class ProductFactory extends Factory
         return [
             'name' => fake()->words(3, true),
             'description' => fake()->paragraph(),
-            'price' => fake()->randomFloat(2, 1, 999),
+            'expiration_date' => fake()->dateTimeBetween('+1 month', '+1 year'),
+            'status' => ProductStatus::Active,
             'quantity' => fake()->numberBetween(0, 100),
         ];
     }

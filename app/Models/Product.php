@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ProductStatus;
 use Database\Factories\ProductFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -19,7 +20,8 @@ class Product extends Model
     protected $fillable = [
         'name',
         'description',
-        'price',
+        'expiration_date',
+        'status',
         'quantity',
     ];
 
@@ -29,7 +31,8 @@ class Product extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'price' => 'decimal:2',
+        'expiration_date' => 'date',
+        'status' => ProductStatus::class,
         'quantity' => 'integer',
     ];
 }
