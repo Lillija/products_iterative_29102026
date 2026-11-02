@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Product;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class ProductQuantityControllerTest extends TestCase
@@ -80,7 +81,7 @@ class ProductQuantityControllerTest extends TestCase
         ];
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('invalidAmounts')]
+    #[DataProvider('invalidAmounts')]
     public function test_invalid_amount_is_rejected_and_stock_is_untouched(string $amount): void
     {
         $product = Product::factory()->create(['quantity' => 5]);
@@ -108,5 +109,59 @@ class ProductQuantityControllerTest extends TestCase
         $response->assertSessionHas('status');
 
         $this->assertSame(0, $product->fresh()->quantity);
+    }
+
+    public function test_ajax_delivery_answers_with_json_and_the_new_quantity(): void
+    {
+        $product = Product::factory()->create(['quantity' => 5]);
+
+        $response = $this->post(
+            route('products.change-quantity', $product),
+            ['action' => 'increase', 'amount' => 4],
+            ['X-Requested-With' => 'XMLHttpRequest', 'Accept' => 'application/json'],
+        );
+
+        $response->assertOk()
+            ->assertJson([
+                'status' => 'Delivery registered: +4 pcs.',
+                'quantity' => 9,
+            ]);
+
+        $this->assertSame(9, $product->fresh()->quantity);
+    }
+
+    public function test_ajax_purchase_that_empties_the_shelf_answers_with_422_json(): void
+    {
+        $product = Product::factory()->create(['quantity' => 2]);
+
+        $response = $this->post(
+            route('products.change-quantity', $product),
+            ['action' => 'decrease', 'amount' => 5],
+            ['X-Requested-With' => 'XMLHttpRequest', 'Accept' => 'application/json'],
+        );
+
+        $response->assertStatus(422)
+            ->assertJson([
+                'message' => 'Quantity cannot go below zero.',
+                'errors' => ['quantity' => ['Quantity cannot go below zero.']],
+            ]);
+
+        $this->assertSame(2, $product->fresh()->quantity);
+    }
+
+    public function test_ajax_validation_fails_are_answered_with_422_json(): void
+    {
+        $product = Product::factory()->create(['quantity' => 2]);
+
+        $response = $this->post(
+            route('products.change-quantity', $product),
+            ['action' => 'explode', 'amount' => 1],
+            ['X-Requested-With' => 'XMLHttpRequest', 'Accept' => 'application/json'],
+        );
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['action']);
+
+        $this->assertSame(2, $product->fresh()->quantity);
     }
 }
