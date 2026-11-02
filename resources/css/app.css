@@ -790,7 +790,6 @@ textarea:focus-visible {
     gap: 0.5rem;
     margin-top: 0.5rem;
 }
-
 .stock-value {
     display: inline-flex;
     align-items: center;
@@ -844,7 +843,109 @@ textarea:focus-visible {
     color: var(--color-error-text);
 }
 
+/* Tag editor (autocomplete + chips, see the show view) */
+
+.tag-editor {
+    position: relative;
+    margin-top: 0.2rem;
+}
+
+.tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin: 0 0 0.55rem;
+    padding: 0;
+    list-style: none;
+}
+
+.tag-list:empty {
+    margin-bottom: 0.35rem;
+}
+
+.tag-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.2rem 0.35rem 0.2rem 0.7rem;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background: var(--color-primary-soft);
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.tag-remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.35rem;
+    height: 1.35rem;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: inherit;
+    font-size: 0.9rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.tag-remove:hover {
+    background: var(--color-error-border);
+    color: var(--on-danger);
+}
+
+.tag-input {
+    width: 16rem;
+}
+
+.tag-suggestions {
+    position: absolute;
+    top: calc(100% - 0.15rem);
+    left: 0;
+    z-index: 5;
+    min-width: 16rem;
+    margin: 0;
+    padding: 0.3rem;
+    list-style: none;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-soft);
+}
+
+.tag-suggestion {
+    display: block;
+    width: 100%;
+    padding: 0.45rem 0.7rem;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--color-text);
+    font: inherit;
+    font-size: 0.925rem;
+    text-align: left;
+    cursor: pointer;
+}
+
+.tag-suggestion:hover,
+.tag-suggestion[data-primary] {
+    background: var(--color-primary-soft);
+    color: var(--color-primary);
+    font-weight: 600;
+}
+
 /* Alerts */
+
+.notifications {
+    margin-bottom: 1.25rem;
+}
+
+.notifications:empty {
+    margin-bottom: 0;
+}
 
 .alert {
     padding: 0.8rem 1rem;
