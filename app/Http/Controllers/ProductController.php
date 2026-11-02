@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\ProductStatus;
 use App\Models\Product;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -77,9 +78,10 @@ class ProductController extends Controller
      * Adjust the product stock (delivery or purchase) and return to its page.
      *
      * All quantity math lives in the model; the controller only picks
-     * the intent-carrying model method to call.
+     * the intent-carrying model method to call. Regular browser forms
+     * get a redirect with flash data, AJAX (Fetch) calls get JSON.
      */
-    public function changeQuantity(Request $request, Product $product): RedirectResponse
+    public function changeQuantity(Request $request, Product $product): RedirectResponse|JsonResponse
     {
         $validated = $request->validate([
             'action' => ['required', 'string', 'in:increase,decrease'],
@@ -96,12 +98,26 @@ class ProductController extends Controller
                 ? $product->decreaseQuantity($amount)
                 : $product->increaseQuantity($amount);
         } catch (InvalidArgumentException $exception) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => $exception->getMessage(),
+                    'errors' => ['quantity' => [$exception->getMessage()]],
+                ], 422);
+            }
+
             return $redirect->withErrors(['quantity' => $exception->getMessage()]);
         }
 
         $status = $action === 'decrease'
             ? sprintf('Purchase registered: -%d pcs.', $amount)
             : sprintf('Delivery registered: +%d pcs.', $amount);
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'status' => $status,
+                'quantity' => $product->fresh()->quantity,
+            ]);
+        }
 
         return $redirect->with('status', $status);
     }
