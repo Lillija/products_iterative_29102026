@@ -28,9 +28,12 @@
     --color-error-bg: rgba(111, 91, 91, 0.12);
     --color-error-border: rgba(111, 91, 91, 0.45);
     --color-error-text: #6f5b5b;
-    --radius: 8px;
+    --radius: 10px;
     --radius-sm: 6px;
+    --radius-lg: 14px;
     --shadow: 0 1px 3px rgba(38, 37, 43, 0.08);
+    /* Softer, wider shadow for lifted/hovered cards */
+    --shadow-soft: 0 12px 32px rgba(38, 37, 43, 0.14);
     --font: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     /* Comfortable reading measure for long-form content */
     --content-max-width: 68rem;
@@ -61,12 +64,25 @@ body {
     font-family: var(--font);
     line-height: 1.6;
     color: var(--color-text);
+    /* Signature dotted grid: dots are the muted tone washed out, so the
+       pattern inherits whatever palette the active theme provides */
     background: var(--color-bg);
+    background-image: radial-gradient(
+        color-mix(in srgb, var(--color-muted) 14%, transparent) 1px,
+        transparent 1.5px
+    );
+    background-size: 24px 24px;
     /* Comfortable default: slightly larger than the 16px browser minimum */
     font-size: 1.0625rem;
     /* Keep content clear of notches in landscape on phones */
     padding-left: env(safe-area-inset-left, 0);
     padding-right: env(safe-area-inset-right, 0);
+}
+
+/* Accent everything selectable with the primary colour */
+::selection {
+    background: var(--color-primary);
+    color: var(--on-primary);
 }
 
 /*
@@ -104,6 +120,24 @@ header {
     z-index: 10;
 }
 
+/* A painted accent hairline runs along the header's bottom edge,
+   fading out to the side — the app's "coloured bookmark" */
+header::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -1px;
+    width: 36%;
+    height: 3px;
+    border-radius: 0 999px 999px 0;
+    background: linear-gradient(
+        90deg,
+        var(--logo-bg),
+        color-mix(in srgb, var(--logo-bg) 40%, transparent)
+    );
+    pointer-events: none;
+}
+
 /* Theme toggle button in the header */
 
 .theme-toggle {
@@ -120,12 +154,18 @@ header {
     font-size: 1rem;
     line-height: 1;
     cursor: pointer;
-    transition: background-color 0.15s ease, border-color 0.15s ease;
+    transition:
+        background-color 0.15s ease,
+        border-color 0.15s ease,
+        rotate 0.3s ease,
+        transform 0.15s ease;
 }
 
+/* The disc wobbles like a luggage tag when hovered */
 .theme-toggle:hover {
     background: var(--color-primary-soft);
     border-color: var(--color-primary);
+    rotate: -14deg;
 }
 
 /* Light mode shows the moon (switch to dark), dark mode the sun */
@@ -155,6 +195,15 @@ main {
     max-width: var(--content-max-width);
     width: 100%;
     margin-inline: auto;
+    /* Content settles in on every page load */
+    animation: page-in 0.28s ease both;
+}
+
+@keyframes page-in {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
 }
 
 aside {
@@ -166,32 +215,88 @@ aside {
 
 footer {
     grid-area: footer;
+    position: relative;
+    overflow: hidden;
     background: var(--footer-bg);
     color: var(--footer-text);
     text-align: center;
     padding: 0.9rem;
     font-size: 0.9rem;
+    letter-spacing: 0.03em;
+}
+
+/* A light beam runs across the footer's top edge — the peach/cream
+   accent from the logo, echoed at the very bottom of the page */
+footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 10%;
+    right: 10%;
+    height: 2px;
+    border-radius: 999px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--footer-text),
+        transparent
+    );
+    opacity: 0.45;
 }
 
 /* Typography */
 
-/* Logo in the header */
+/* Logo in the header — a slightly tilted price-tag pill with a
+   pressed-shadow "sticker on a shelf edge" effect */
 
 .logo {
     display: inline-block;
     margin: 0;
-    padding: 0.3rem 0.7rem;
-    border-radius: var(--radius-sm);
+    padding: 0.35rem 0.95rem;
+    border-radius: 999px;
     background: var(--logo-bg);
     color: var(--logo-text);
     font-size: 1.05rem;
     font-weight: 600;
     letter-spacing: 0.02em;
+    transform: rotate(-1.2deg);
+    box-shadow:
+        0 3px 0 color-mix(in srgb, var(--logo-bg) 55%, var(--color-bg)),
+        0 8px 18px color-mix(in srgb, var(--logo-bg) 28%, transparent);
+}
+
+/* A little shelf-dot in front of the name */
+.logo::before {
+    content: '●';
+    margin-right: 0.5em;
+    font-size: 0.65em;
+    vertical-align: 0.14em;
 }
 
 main h1 {
     margin-top: 0;
-    font-size: 1.6rem;
+    /* Display-type page title with a painted accent stroke below */
+    padding-bottom: 0.55rem;
+    border-bottom: 1px solid var(--color-border);
+    font-size: 1.85rem;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    position: relative;
+}
+
+main h1::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 3.4rem;
+    height: 4px;
+    border-radius: 999px;
+    background: linear-gradient(
+        90deg,
+        var(--color-primary),
+        color-mix(in srgb, var(--color-primary) 25%, transparent)
+    );
 }
 
 main h2 {
@@ -206,9 +311,23 @@ aside h2 {
     color: var(--color-muted);
 }
 
-/* Placeholder advertisement block in the right sidebar */
+/* A short painted swatch under the sidebar heading */
+aside h2::after {
+    content: '';
+    display: block;
+    width: 2.2rem;
+    height: 3px;
+    margin-top: 0.45rem;
+    border-radius: 999px;
+    background: var(--color-primary);
+    opacity: 0.75;
+}
+
+/* Placeholder advertisement block in the right sidebar — styled like a
+   pinned note: slightly tilted, with a strip of tape across the top */
 
 aside .ad {
+    position: relative;
     padding: 0.9rem;
     border: 1px dashed var(--color-border);
     border-radius: var(--radius);
@@ -216,6 +335,25 @@ aside .ad {
     color: var(--color-muted);
     font-size: 0.9rem;
     line-height: 1.5;
+    transform: rotate(-0.6deg);
+    transition: transform 0.2s ease;
+}
+
+aside .ad:hover {
+    transform: rotate(0deg) scale(1.01);
+}
+
+/* The tape: a strip of the primary colour, sitting half above the card */
+aside .ad::before {
+    content: '';
+    position: absolute;
+    top: -9px;
+    left: 50%;
+    width: 72px;
+    height: 16px;
+    border-radius: 3px;
+    background: color-mix(in srgb, var(--logo-bg) 85%, transparent);
+    transform: translateX(-50%) rotate(-3deg);
 }
 
 aside .ad strong {
@@ -262,6 +400,7 @@ nav .nav-list {
 }
 
 nav .nav-link {
+    position: relative;
     display: flex;
     align-items: center;
     min-height: var(--tap-target);
@@ -270,16 +409,42 @@ nav .nav-link {
     color: var(--color-text);
     text-decoration: none;
     font-weight: 500;
+    transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+
+/* A little accent needle slides out on hover/active — same gesture as
+    the header hairline, echoed in the sidebar */
+nav .nav-link::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 3px;
+    height: 0%;
+    border-radius: 999px;
+    background: var(--color-primary);
+    transform: translateY(-50%);
+    transition: height 0.15s ease;
 }
 
 nav .nav-link:hover {
     background: var(--color-bg);
     color: var(--color-primary);
+    transform: translateX(3px);
+}
+
+nav .nav-link:hover::before {
+    height: 55%;
 }
 
 nav .nav-link.is-active {
     background: var(--color-primary-soft);
     color: var(--color-primary);
+    transform: none;
+}
+
+nav .nav-link.is-active::before {
+    height: 60%;
 }
 
 /* Buttons */
@@ -301,12 +466,27 @@ nav .nav-link.is-active {
     cursor: pointer;
     background: var(--color-primary);
     color: #fff;
-    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    /* A gentle top-light sheen over whatever fill the theme picks,
+       plus a pressed-shadow so every button reads as a physical key */
+    background-image: linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--on-primary) 14%, transparent),
+        transparent 55%
+    );
+    box-shadow: 0 1px 2px color-mix(in srgb, var(--color-text) 22%, transparent);
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease,
+        transform 0.1s ease, box-shadow 0.15s ease;
 }
 
 .btn:hover {
     background: var(--color-primary-hover);
     color: #fff;
+    transform: translateY(-1px);
+}
+
+.btn:active {
+    transform: translateY(1px);
+    box-shadow: 0 0 0 transparent;
 }
 
 .btn-secondary {
@@ -346,7 +526,7 @@ form.inline .btn {
     overflow-x: auto;
     background: var(--color-surface);
     border: 1px solid var(--color-border);
-    border-radius: var(--radius);
+    border-radius: var(--radius-lg);
     box-shadow: var(--shadow);
 }
 
@@ -363,7 +543,11 @@ td {
 }
 
 thead th {
-    background: var(--color-bg);
+    background: linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--color-bg) 45%, var(--color-surface)),
+        var(--color-bg)
+    );
     color: var(--color-muted);
     font-size: 0.8rem;
     text-transform: uppercase;
@@ -371,12 +555,19 @@ thead th {
     border-bottom: 1px solid var(--color-border);
 }
 
+tbody tr {
+    transition: background-color 0.12s ease, box-shadow 0.12s ease;
+}
+
 tbody tr:nth-child(even) {
     background: var(--stripe);
 }
 
+/* The hovered row not only tints — a primary-coloured needle appears
+    along its left edge, matching the nav accent */
 tbody tr:hover {
     background: var(--color-primary-soft);
+    box-shadow: inset 3px 0 0 var(--color-primary);
 }
 
 td .actions {
@@ -403,13 +594,26 @@ tbody tr:has(.empty-state):hover {
 /* Status badges */
 
 .status-badge {
-    display: inline-block;
-    padding: 0.15rem 0.6rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    padding: 0.15rem 0.65rem;
+    border: 1px solid transparent;
     border-radius: 999px;
     font-size: 0.8rem;
     font-weight: 600;
     line-height: 1.5;
     white-space: nowrap;
+}
+
+/* Every badge carries a small status-light dot in its own text colour */
+.status-badge::before {
+    content: '';
+    width: 0.5em;
+    height: 0.5em;
+    border-radius: 50%;
+    background: currentColor;
+    box-shadow: 0 0 0 2px color-mix(in srgb, currentColor 25%, transparent);
 }
 
 .status-active {
@@ -432,11 +636,33 @@ tbody tr:has(.empty-state):hover {
 
 .form-card {
     max-width: 34rem;
+    position: relative;
+    overflow: hidden;
     background: var(--color-surface);
     border: 1px solid var(--color-border);
-    border-radius: var(--radius);
+    border-radius: var(--radius-lg);
     box-shadow: var(--shadow);
     padding: 1.5rem;
+}
+
+/* Cards and form cards share a "signed" look: a painted stroke runs
+   across their top edge, like a shelf label held by a clip */
+.form-card::before,
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    background: linear-gradient(
+        90deg,
+        var(--color-primary),
+        color-mix(in srgb, var(--color-primary) 30%, transparent) 70%,
+        transparent
+    );
+    pointer-events: none;
 }
 
 .form-field {
@@ -485,6 +711,8 @@ textarea:focus {
     border-color: var(--color-primary);
     outline: 2px solid var(--color-primary-soft);
     outline-offset: 0;
+    /* A soft glow halo matching the focus ring */
+    box-shadow: 0 0 0 4px var(--color-primary-soft);
 }
 
 /* Stronger ring for keyboard users */
@@ -517,11 +745,20 @@ textarea:focus-visible {
 
 .card {
     max-width: 40rem;
+    position: relative;
+    overflow: hidden;
     background: var(--color-surface);
     border: 1px solid var(--color-border);
-    border-radius: var(--radius);
+    border-radius: var(--radius-lg);
     box-shadow: var(--shadow);
     padding: 1.5rem;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+/* Cards lift slightly on hover, catching the wide soft shadow */
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-soft);
 }
 
 .product-details {
@@ -555,8 +792,15 @@ textarea:focus-visible {
 }
 
 .stock-value {
-    min-width: 4rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 4.5rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    background: var(--color-primary-soft);
     font-weight: 600;
+    font-variant-numeric: tabular-nums;
 }
 
 .stock-amount {
@@ -564,9 +808,28 @@ textarea:focus-visible {
     min-height: var(--tap-target);
     padding: 0.35rem 0.6rem;
     border: 1px solid var(--color-border);
-    border-radius: var(--radius);
+    border-radius: 999px;
     background: var(--color-surface);
     color: var(--color-text);
+    font-variant-numeric: tabular-nums;
+}
+
+.btn-stock,
+.btn-stock-out {
+    border-radius: 999px;
+    background-image: none;
+}
+
+.btn-stock:hover,
+.btn-stock-out:hover,
+.btn-stock:focus-visible,
+.btn-stock-out:focus-visible {
+    transform: translateY(-1px);
+}
+
+.btn-stock:active,
+.btn-stock-out:active {
+    transform: translateY(1px);
 }
 
 .btn-stock {
@@ -587,7 +850,17 @@ textarea:focus-visible {
     padding: 0.8rem 1rem;
     margin-bottom: 1.25rem;
     border: 1px solid;
+    border-left-width: 4px;
     border-radius: var(--radius);
+    /* Messages pop in from above, then (if dismissible) fade out later */
+    animation: alert-pop 0.22s ease;
+}
+
+@keyframes alert-pop {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
 }
 
 .alert ul {
@@ -607,9 +880,12 @@ textarea:focus-visible {
     color: var(--color-error-text);
 }
 
-/* Flash messages fade out just before app.js removes them (~4s) */
+/* Flash messages fade out just before app.js removes them (~4s). The
+   pop-in still plays first; the fade-out only overrides it at the end */
 .alert[data-auto-dismiss] {
-    animation: alert-fade-out 0.4s ease 3.6s forwards;
+    animation:
+        alert-pop 0.22s ease,
+        alert-fade-out 0.4s ease 3.6s forwards;
 }
 
 @keyframes alert-fade-out {
@@ -636,11 +912,13 @@ textarea:focus-visible {
     min-height: var(--tap-target);
     padding: 0.45rem 0.9rem;
     border: 1px solid var(--color-border);
-    border-radius: var(--radius);
+    border-radius: 999px;
     background: var(--color-surface);
     text-decoration: none;
     font-size: 0.95rem;
-    transition: border-color 0.15s ease, color 0.15s ease;
+    font-variant-numeric: tabular-nums;
+    transition: border-color 0.15s ease, color 0.15s ease, transform 0.15s ease,
+        box-shadow 0.15s ease;
 }
 
 .pagination a {
@@ -650,6 +928,8 @@ textarea:focus-visible {
 .pagination a:hover {
     border-color: var(--color-primary);
     color: var(--color-primary);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px color-mix(in srgb, var(--color-text) 12%, transparent);
 }
 
 .pagination span.disabled {
@@ -710,6 +990,26 @@ textarea:focus-visible {
         flex-wrap: wrap;
     }
 
+    /* Nav links become compact pills that fit the gesture-like accent */
+    nav .nav-link {
+        justify-content: center;
+        border: 1px solid var(--color-border);
+        border-radius: 999px;
+        padding: 0.4rem 1rem;
+    }
+
+    nav .nav-link:hover {
+        transform: none;
+    }
+
+    nav .nav-link::before {
+        display: none;
+    }
+
+    nav .nav-link.is-active {
+        border-color: var(--color-primary);
+    }
+
     aside {
         border-left: 0;
         border-top: 1px solid var(--color-border);
@@ -746,9 +1046,15 @@ textarea:focus-visible {
         color: var(--color-primary);
     }
 
+    .btn:hover,
+    .btn:active {
+        transform: none;
+    }
+
     nav .nav-link:hover {
         background: transparent;
         color: var(--color-text);
+        transform: none;
     }
 
     nav .nav-link.is-active,
@@ -759,14 +1065,25 @@ textarea:focus-visible {
 
     tbody tr:nth-child(odd):hover {
         background: transparent;
+        box-shadow: none;
     }
 
     tbody tr:nth-child(even):hover {
         background: var(--stripe);
+        box-shadow: none;
     }
 
     tbody tr:has(.empty-state):hover {
         background: transparent;
+    }
+
+    .card:hover {
+        transform: none;
+        box-shadow: var(--shadow);
+    }
+
+    aside .ad:hover {
+        transform: rotate(-0.6deg);
     }
 }
 
@@ -783,7 +1100,6 @@ textarea:focus-visible {
     --color-border: rgba(238, 238, 238, 0.18);
     --color-text: #eeeeee;
     --color-muted: rgba(238, 238, 238, 0.65);
-
     --color-primary: #9cc9dd;
     --color-primary-hover: #bfe0ee;
     --color-primary-soft: rgba(156, 201, 221, 0.16);
@@ -808,6 +1124,7 @@ textarea:focus-visible {
     --footer-bg: #161616;
     --footer-text: var(--color-text);
     --shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+    --shadow-soft: 0 12px 32px rgba(0, 0, 0, 0.6);
 }
 
 /* Same palette, applied for visitors who follow the system setting
