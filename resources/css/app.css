@@ -544,6 +544,43 @@ textarea:focus-visible {
     margin: 0.2rem 0 0;
 }
 
+/* Stock adjust controls (delivery / purchase) */
+
+.stock-control {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.stock-value {
+    min-width: 4rem;
+    font-weight: 600;
+}
+
+.stock-amount {
+    width: 5.5rem;
+    min-height: var(--tap-target);
+    padding: 0.35rem 0.6rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-surface);
+    color: var(--color-text);
+}
+
+.btn-stock {
+    background: var(--color-success-bg);
+    border-color: var(--color-success-border);
+    color: var(--color-success-text);
+}
+
+.btn-stock-out {
+    background: var(--color-error-bg);
+    border-color: var(--color-error-border);
+    color: var(--color-error-text);
+}
+
 /* Alerts */
 
 .alert {

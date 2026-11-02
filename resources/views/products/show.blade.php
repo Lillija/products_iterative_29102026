@@ -1,6 +1,8 @@
 <x-layout :title="$product->name">
     <h1>{{ $product->name }}</h1>
 
+    <x-validation-errors />
+
     <div class="card">
         <dl class="product-details">
             <dt>Description</dt>
@@ -17,7 +19,23 @@
             <dd>{{ $product->expiration_date?->format('Y-m-d') ?? '—' }}</dd>
 
             <dt>Quantity</dt>
-            <dd>{{ $product->quantity }} pcs</dd>
+            <dd class="stock-control">
+                <span class="stock-value" data-quantity>{{ $product->quantity }} pcs</span>
+
+                <form class="stock-form" id="stock-form"
+                      action="{{ route('products.change-quantity', $product) }}" method="POST">
+                    @csrf
+                </form>
+
+                <input class="stock-amount" form="stock-form" type="number" name="amount"
+                       value="1" min="1" max="100000" aria-label="Amount to add or remove">
+
+                <button class="btn btn-stock" form="stock-form" type="submit"
+                        name="action" value="increase">+ Delivery</button>
+
+                <button class="btn btn-stock btn-stock-out" form="stock-form" type="submit"
+                        name="action" value="decrease">− Purchase</button>
+            </dd>
         </dl>
 
         <p class="form-actions">

@@ -7,6 +7,7 @@ use App\Models\Product;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use InvalidArgumentException;
 
 class ProductController extends Controller
 {
@@ -70,6 +71,37 @@ class ProductController extends Controller
         return redirect()
             ->route('products.show', $product)
             ->with('status', 'Product updated.');
+    }
+
+    /**
+     * Adjust the product stock (delivery or purchase) and return to its page.
+     */
+    public function changeQuantity(Request $request, Product $product): RedirectResponse
+    {
+        $validated = $request->validate([
+            'action' => ['required', 'string', 'in:increase,decrease'],
+            'amount' => ['required', 'integer', 'min:1', 'max:100000'],
+        ]);
+
+        $difference = $validated['action'] === 'decrease'
+            ? -1 * $validated['amount']
+            : $validated['amount'];
+
+        try {
+            $product->changeQuantity($difference);
+        } catch (InvalidArgumentException $exception) {
+            return redirect()
+                ->route('products.show', $product)
+                ->withErrors(['quantity' => $exception->getMessage()]);
+        }
+
+        $status = $difference > 0
+            ? sprintf('Delivery registered: +%d pcs.', $difference)
+            : sprintf('Purchase registered: %d pcs.', $difference);
+
+        return redirect()
+            ->route('products.show', $product)
+            ->with('status', $status);
     }
 
     /**
