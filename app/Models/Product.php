@@ -38,10 +38,28 @@ class Product extends Model
     ];
 
     /**
+     * Register a delivery: the given amount arrives in the store.
+     */
+    public function increaseQuantity(int $amount = 1): static
+    {
+        return $this->changeQuantity($amount);
+    }
+
+    /**
+     * Register a purchase: the given amount leaves the store.
+     */
+    public function decreaseQuantity(int $amount = 1): static
+    {
+        return $this->changeQuantity(-$amount);
+    }
+
+    /**
      * Adjust the stored quantity by the given difference and persist it.
      *
      * A positive difference models a delivery (stock arriving), a
-     * negative one a purchase (stock leaving the store).
+     * negative one a purchase (stock leaving the store). The
+     * intent-carrying methods above are the public API; this is the
+     * single piece of arithmetic both of them share.
      *
      * @throws InvalidArgumentException when the change would drop the quantity below zero
      */
@@ -57,21 +75,5 @@ class Product extends Model
         $this->save();
 
         return $this;
-    }
-
-    /**
-     * Register a delivery: the given amount arrives in the store.
-     */
-    public function increaseQuantity(int $amount = 1): static
-    {
-        return $this->changeQuantity($amount);
-    }
-
-    /**
-     * Register a purchase: the given amount leaves the store.
-     */
-    public function decreaseQuantity(int $amount = 1): static
-    {
-        return $this->changeQuantity(-$amount);
     }
 }

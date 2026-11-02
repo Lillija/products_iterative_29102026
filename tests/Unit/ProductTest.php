@@ -80,4 +80,69 @@ class ProductTest extends TestCase
 
         $this->fail('A change that would drop the quantity below zero should not be persisted.');
     }
+
+    /**
+     * Zero-level changes pass validation-less arithmetic: the quantity
+     * must stay exactly as it was and still be persisted safely.
+     */
+    public function test_a_zero_difference_leaves_the_quantity_untouched(): void
+    {
+        $product = Product::factory()->create(['quantity' => 9]);
+
+        $product->changeQuantity(0);
+
+        $this->assertSame(9, $product->refresh()->quantity);
+    }
+
+    /**
+     * Both intent methods are chainable (fluent): they must hand the
+     * product back so callers can keep working with it.
+     */
+    public function test_quantity_methods_return_the_product_for_chaining(): void
+    {
+        $product = Product::factory()->create(['quantity' => 4]);
+
+        $this->assertSame($product, $product->increaseQuantity(2));
+        $this->assertSame($product, $product->decreaseQuantity(1));
+    }
+
+    /**
+     * Real usage chains several operations: every call builds on the
+     * result of the previous one (delivery, purchases, delivery, ...).
+     */
+    public function test_consecutive_changes_accumulate(): void
+    {
+        $product = Product::factory()->outOfStock()->create();
+
+        $product->increaseQuantity(10)
+            ->decreaseQuantity(4)
+            ->decreaseQuantity(1)
+            ->increaseQuantity(2);
+
+        $this->assertSame(7, $product->refresh()->quantity);
+    }
+
+    public function test_decreasing_to_exactly_zero_is_allowed(): void
+    {
+        $product = Product::factory()->create(['quantity' => 3]);
+
+        $product->decreaseQuantity(3);
+
+        $this->assertSame(0, $product->refresh()->quantity);
+    }
+
+    public function test_decrease_quantity_rejects_reducing_below_zero(): void
+    {
+        $product = Product::factory()->create(['quantity' => 1]);
+
+        try {
+            $product->decreaseQuantity(2);
+        } catch (InvalidArgumentException) {
+            $this->assertSame(1, $product->fresh()->quantity);
+
+            return;
+        }
+
+        $this->fail('decreaseQuantity() should refuse to empty an almost empty shelf.');
+    }
 }

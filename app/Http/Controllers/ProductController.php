@@ -75,6 +75,9 @@ class ProductController extends Controller
 
     /**
      * Adjust the product stock (delivery or purchase) and return to its page.
+     *
+     * All quantity math lives in the model; the controller only picks
+     * the intent-carrying model method to call.
      */
     public function changeQuantity(Request $request, Product $product): RedirectResponse
     {
@@ -83,25 +86,24 @@ class ProductController extends Controller
             'amount' => ['required', 'integer', 'min:1', 'max:100000'],
         ]);
 
-        $difference = $validated['action'] === 'decrease'
-            ? -1 * $validated['amount']
-            : $validated['amount'];
+        $action = $validated['action'];
+        $amount = $validated['amount'];
+
+        $redirect = redirect()->route('products.show', $product);
 
         try {
-            $product->changeQuantity($difference);
+            $action === 'decrease'
+                ? $product->decreaseQuantity($amount)
+                : $product->increaseQuantity($amount);
         } catch (InvalidArgumentException $exception) {
-            return redirect()
-                ->route('products.show', $product)
-                ->withErrors(['quantity' => $exception->getMessage()]);
+            return $redirect->withErrors(['quantity' => $exception->getMessage()]);
         }
 
-        $status = $difference > 0
-            ? sprintf('Delivery registered: +%d pcs.', $difference)
-            : sprintf('Purchase registered: %d pcs.', $difference);
+        $status = $action === 'decrease'
+            ? sprintf('Purchase registered: -%d pcs.', $amount)
+            : sprintf('Delivery registered: +%d pcs.', $amount);
 
-        return redirect()
-            ->route('products.show', $product)
-            ->with('status', $status);
+        return $redirect->with('status', $status);
     }
 
     /**
