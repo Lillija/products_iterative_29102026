@@ -4,8 +4,10 @@ namespace App\Models;
 
 use App\Enums\ProductStatus;
 use Database\Factories\ProductFactory;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use InvalidArgumentException;
 
 class Product extends Model
@@ -36,6 +38,47 @@ class Product extends Model
         'status' => ProductStatus::class,
         'quantity' => 'integer',
     ];
+
+    /**
+     * The tags labelling this product.
+     *
+     * @return BelongsToMany<Tag, $this>
+     */
+    public function tags(): BelongsToMany
+    {
+        return $this->belongsToMany(Tag::class);
+    }
+
+    /**
+     * @return Collection<int, Tag>
+     */
+    public function getTags(): Collection
+    {
+        return $this->tags()->orderBy('name')->get();
+    }
+
+    /**
+     * Attach exactly the named tags to the product.
+     *
+     * Unknown names are created on the fly, extra whitespace is
+     * trimmed, duplicates are collapsed, and blank names are skipped.
+     * Tags that were on the product before but are not in the list
+     * are detached (the pivot mirrors the submitted list).
+     *
+     * @param  list<string|int>  $names
+     */
+    public function syncTags(array $names): static
+    {
+        $tagIds = collect($names)
+            ->map(fn ($name) => trim((string) $name))
+            ->filter(fn ($name) => $name !== '')
+            ->unique()
+            ->map(fn ($name) => Tag::firstOrCreate(['name' => $name])->id);
+
+        $this->tags()->sync($tagIds->all());
+
+        return $this;
+    }
 
     /**
      * Register a delivery: the given amount arrives in the store.
