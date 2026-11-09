@@ -133,3 +133,50 @@
     line-height: 1;
     color: rgba(0, 0, 0, 0.25);
 }
+
+/* 6.uzd. */
+
+/* a) Flex konteiners ar vertikālu centrēšanu
+   b) logo pa kreisi, saites pa labi (space-between), balta josla */
+.nav-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 24px;
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+}
+
+.nav-links {
+    /* c) vienādi attālumi starp saitēm */
+    display: flex;
+    gap: 24px;
+}
+
+.nav-links a {
+    color: #333;
+    text-decoration: none;
+}
+
+/* d) Halton pāreja maina teksta krāsu */
+.nav-links a {
+    transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+    color: #d03030;
+}
+
+/* Responsivitāte: šaurā ekrānā navigācija salokās vertikāli */
+@media (max-width: 480px) {
+    .nav-bar {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .nav-links {
+        gap: 16px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
