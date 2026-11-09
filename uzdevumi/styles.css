@@ -44,3 +44,31 @@
     padding: 8px;
     cursor: pointer;
 }
+
+/* 3.uzd. */
+
+/* a) No noklusētā saraksta stila atvērta un horizontāla izvēlne */
+.menu {
+    list-style: none;
+    display: flex;
+    gap: 24px;
+    padding: 0;
+}
+
+.menu a {
+    color: #333;
+    text-decoration: none;
+}
+
+/* b).hover: maina krāsu un uzliek pasvītrojumu */
+.menu a:hover {
+    color: #d03030;
+    text-decoration: underline;
+}
+
+/* c) Aktīvais izvēlnes elements ar atsevišķu fona krāsu */
+.menu li.active {
+    background-color: #ffd966;
+    padding: 4px 10px;
+    border-radius: 4px;
+}
