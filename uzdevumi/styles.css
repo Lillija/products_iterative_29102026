@@ -1,5 +1,10 @@
 /* 1.uzd. */
 
+/* Vienkāršs atdalījums starp uzdevumu sekcijām */
+.uzdevums {
+    margin-bottom: 40px;
+}
+
 /* a) Unikāls (id) selektors kartītei: gaiši pelēks fons, plāna apmale, iekšējā atstarpe */
 #produkta-kartite {
     background-color: #f0f0f0;
