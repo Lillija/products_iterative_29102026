@@ -1,0 +1,21 @@
+/* 1.uzd. */
+
+/* a) Unikāls (id) selektors kartītei: gaiši pelēks fons, plāna apmale, iekšējā atstarpe */
+#produkta-kartite {
+    background-color: #f0f0f0;
+    border: 1px solid #999;
+    padding: 16px;
+}
+
+/* b) Kartītes virsraksts: lielāks fonts, bold, apakšējā atstarpe */
+.kartites-virsraksts {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 0.75rem;
+}
+
+/* c) Kartītes teksts: mazāks rindiņu augstums un izbalināta krāsa */
+.kartites-teksts {
+    line-height: 1.4;
+    color: #777;
+}
