@@ -105,3 +105,26 @@
     color: #fff;
     background-color: rgba(0, 0, 0, 0.55);
 }
+
+/* 5.uzd. */
+
+/* Smalka kreisā robeža akcentam un vieta pēdiņas simbolam stūrītī */
+.quote {
+    position: relative;
+    margin: 0;
+    padding: 16px 24px 16px 72px;
+    border-left: 4px solid #909090;
+    color: #555;
+}
+
+/* Vizuāls pēdiņas simbols augšējā kreisajā stūrī */
+.quote::before {
+    content: "\201C";
+    position: absolute;
+    top: 0;
+    left: 12px;
+    font-size: 4rem;
+    font-style: italic;
+    line-height: 1;
+    color: rgba(0, 0, 0, 0.25);
+}
